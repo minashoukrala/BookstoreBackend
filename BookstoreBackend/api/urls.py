@@ -4,6 +4,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('example/', views.example_view),
+    path('products/', views.get_products),
+    path('cart/add/', views.add_to_cart),
 ]
