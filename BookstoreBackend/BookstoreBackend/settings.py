@@ -77,8 +77,13 @@ WSGI_APPLICATION = 'BookstoreBackend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'stmarybookstoredb',
+        'USER': 'local_admin',
+        'PASSWORD': 'Stmary1234',
+        'HOST': 'bookstoreadmin.database.windows.net',
+        'PORT': '1433',
+        
     }
 }
 
