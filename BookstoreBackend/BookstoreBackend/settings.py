@@ -41,6 +41,12 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,8 +83,13 @@ WSGI_APPLICATION = 'BookstoreBackend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'stmarybookstoredb',
+        'USER': 'local_admin',
+        'PASSWORD': 'Stmary1234',
+        'HOST': 'bookstoreadmin.database.windows.net',
+        'PORT': '1433',
+        
     }
 }
 
