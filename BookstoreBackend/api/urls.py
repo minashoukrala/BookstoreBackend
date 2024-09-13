@@ -3,6 +3,7 @@ from .views.user_views import user_list, user_detail
 from .views.product_views import product_list, product_detail
 from .views.cart_views import view_cart
 from .views.order_views import order_list, order_detail
+from .views.auth_views import signup, login, test_token
 
 urlpatterns = [
     path('users/', user_list, name='user_list'),  # List all users
@@ -15,4 +16,8 @@ urlpatterns = [
 
     path('orders/<int:user_id>/', order_list, name='order_list'),  # List all orders for a user
     path('orders/detail/<int:order_id>/', order_detail, name='order_detail'),  # Get a specific order by ID
+
+    path('signup/', signup, name='signup'),
+    path('login/', login, name='login'),
+    path('test_token/', test_token, name='test_token'),
 ]

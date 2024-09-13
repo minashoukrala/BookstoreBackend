@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Admin, Carts, Cartproducts, Orders, Orderproduct, Products, Users
+# from django.contrib.auth.models import User
 
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,4 +35,4 @@ class ProductsSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['userid', 'email', 'password', 'firstname', 'lastname', 'address', 'phonenumber', 'username']
+        fields = ['userid', 'email', 'password', 'firstname', 'lastname', 'address', 'phonenumber', 'username']   
