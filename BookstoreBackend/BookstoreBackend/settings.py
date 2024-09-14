@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,14 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
-    'rest_framework',
     'django_extensions',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Default Django authentication
+)
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 MIDDLEWARE = [
@@ -82,15 +93,28 @@ WSGI_APPLICATION = 'BookstoreBackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'mssql',
+#        'NAME': 'stmarybookstoredb',
+#        'USER': 'local_admin',
+#        'PASSWORD': 'Stmary1234',
+#        'HOST': 'bookstoreadmin.database.windows.net',
+#        'PORT': '1433',
+        
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': 'stmarybookstoredb',
-        'USER': 'local_admin',
-        'PASSWORD': 'Stmary1234',
-        'HOST': 'bookstoreadmin.database.windows.net',
-        'PORT': '1433',
-        
+        'NAME': 'BookstoreDB',
+        'HOST': 'LAPTOP-ERGF04OG\\SQLEXPRESS01',  # The host as seen in your SSMS
+        'PORT': '',  # SQL Server usually runs on port 1433; leave blank if default
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',  # or the driver version you have installed
+            'extra_params': 'TrustServerCertificate=yes;',  # Helps avoid SSL related errors
+        },
     }
 }
 

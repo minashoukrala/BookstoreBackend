@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from ..models import Carts, Cartproducts, Products
 from ..serializers import CartproductsSerializer # Assuming this is your serializer for cart products
 

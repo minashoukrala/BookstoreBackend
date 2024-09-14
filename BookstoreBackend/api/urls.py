@@ -3,6 +3,7 @@ from .views.user_views import users_list,user_details,is_user_admin, manage_user
 from .views.product_views import all_products_details, product_details, products_by_category, product_categories, manage_product
 from .views.cart_views import user_cart_items,  modify_cart_item
 from .views.order_views import user_orders, products_in_order, delivered_orders, orders_not_delivered, add_order, update_order
+from .views.auth import login
 
 urlpatterns = [
     
@@ -31,4 +32,6 @@ urlpatterns = [
     path('orders/not_delivered/', orders_not_delivered, name='orders_not_delivered'),
     path('orders/add/', add_order, name='add_order'), #add order details and orderproduct details
     path('orders/<int:orderid>/', update_order, name='update_order'),
+    
+    path('login/', login, name='login'),
 ]

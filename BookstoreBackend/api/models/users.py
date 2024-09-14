@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
+
 
 class Users(models.Model):
     userid = models.AutoField(db_column='UserID', primary_key=True)  # Field name made lowercase.
