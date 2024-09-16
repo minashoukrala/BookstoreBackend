@@ -38,20 +38,34 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    
     'api',
+    
     'django_extensions',
     'rest_framework',
     'rest_framework_simplejwt',
+    
+     # Allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',  # You may skip this if you don't need social authentication
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
     ),
 }
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # Default Django authentication
+    'django.contrib.auth.backends.ModelBackend', # Default Django authentication
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 SIMPLE_JWT = {
@@ -67,7 +81,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    
+     # Allauth middleware
+    'allauth.account.middleware.AccountMiddleware',  # Add this line
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000'] 
+
+
 
 ROOT_URLCONF = 'BookstoreBackend.urls'
 
@@ -119,6 +141,15 @@ DATABASES = {
 }
 
 
+AUTH_USER_MODEL = 'api.Users'  
+SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+
+SUPABASE_URL = "https://uldsagndgvnitbgbixeh.supabase.co"
+SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsZHNhZ25kZ3ZuaXRiZ2JpeGVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYzNjYyNTUsImV4cCI6MjA0MTk0MjI1NX0.DnXhcgY95rvqtUhwNXA-IbRhw-bfq2lxwkjEhIGSmYo"
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -159,3 +190,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOWED_ORIGINS = [
+    "https://your-supabase-url.supabase.co",
+]
+
