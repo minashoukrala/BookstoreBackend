@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',  # You may skip this if you don't need social authentication
+    'rest_framework.authtoken',
 ]
 
 REST_FRAMEWORK = {
@@ -57,11 +58,31 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
 }
+
+# Ensures that session cookies are sent over HTTPS
+SESSION_COOKIE_SECURE = True
+
+# Ensures that the CSRF cookie is sent over HTTPS
+CSRF_COOKIE_SECURE = True
+
+# Sets the session cookie to be accessible only by the server.
+SESSION_COOKIE_HTTPONLY = True
+
+# Restricts how cookies are sent with requests from external sites
+SESSION_COOKIE_SAMESITE = 'Lax'  # Can be 'Strict' for stricter enforcement
+
+
+# Expire sessions when the user closes the browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Set session expiration to 1 day (86400 seconds)
+SESSION_COOKIE_AGE = 86400  # 1 day in seconds
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # Default Django authentication
@@ -85,6 +106,7 @@ MIDDLEWARE = [
     
      # Allauth middleware
     'allauth.account.middleware.AccountMiddleware',  # Add this line
+    
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000'] 
@@ -153,12 +175,16 @@ SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,  # Set to a higher number based on your requirement
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -167,6 +193,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 
 # Internationalization

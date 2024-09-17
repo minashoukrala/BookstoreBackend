@@ -34,4 +34,5 @@ class ProductsSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['userid', 'email', 'password', 'firstname', 'lastname', 'address', 'phonenumber', 'username']
+        
+        fields = ['userid', 'email', 'first_name', 'last_name', 'address', 'phonenumber', 'username']  # Include all fields you need

@@ -3,6 +3,8 @@ from .views.user_views import users_list,user_details,is_user_admin, manage_user
 from .views.product_views import all_products_details, product_details, products_by_category, product_categories, manage_product
 from .views.cart_views import user_cart_items,  modify_cart_item
 from .views.order_views import user_orders, products_in_order, delivered_orders, orders_not_delivered, add_order, update_order
+from .views.auth import RegisterView, LoginView, LogoutView
+from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
@@ -22,7 +24,7 @@ urlpatterns = [
 
     path('users/<int:userid>/cart/', user_cart_items, name='user_cart_items'),  # Get the cart of a specific user
     path('users/<int:userid>/cart/<int:productid>/', modify_cart_item, name='modify_cart_item'),
-     path('users/edit/<int:userid>/', edit_user, name='edit_user'),
+    path('users/edit/<int:userid>/', edit_user, name='edit_user'),
     path('admins/add/', manage_admin, name='add_admin'),  # For adding an admin
     path('admins/updateorremove/<int:adminid>/', manage_admin, name='updateorremove'),  # For updating or removing an admin
 
@@ -35,6 +37,9 @@ urlpatterns = [
     
     
     path('accounts/', include('allauth.urls')),
-    
-    
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('api-token-auth/', obtain_auth_token)
+
 ]

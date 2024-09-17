@@ -5,8 +5,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from ..models import Users, Admin
 from ..serializers import UsersSerializer, AdminSerializer
+from ..persmissions import IsAdminUser
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])# Ensure only authenticated users can access thi
 def users_list(request):
     # Fetch all users
     users = Users.objects.all()
