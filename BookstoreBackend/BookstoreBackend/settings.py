@@ -78,6 +78,8 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'  # Can be 'Strict' for stricter enforcement
 
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # This should be set or default
+
 # Expire sessions when the user closes the browser
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -222,3 +224,23 @@ CORS_ALLOWED_ORIGINS = [
     "https://your-supabase-url.supabase.co",
 ]
 
+# reset password email in production
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'your-smtp-host.com'
+#EMAIL_PORT = 587
+#EMAIL_USE_TLS = True
+#EMAIL_HOST_USER = 'your-email@example.com'
+#EMAIL_HOST_PASSWORD = 'your-email-password'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Email configuration for Gmail
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'minamdoss@outlook.com'
+EMAIL_HOST_PASSWORD = 'GOT Mina6'
+
+# Default email address to send from    
+DEFAULT_FROM_EMAIL = 'minamdoss@outlook.com'

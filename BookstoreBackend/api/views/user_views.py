@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from ..models import Users, Admin
 from ..serializers import UsersSerializer, AdminSerializer
-from ..persmissions import IsAdminUser
+from ..persmissions import IsAdminUser, IsAdminOrOwner
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])# Ensure only authenticated users can access thi
@@ -36,6 +36,7 @@ def users_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAdminOrOwner])
 def user_details(request, userid):
     try:
         # Fetch the specific user by ID
@@ -60,6 +61,7 @@ def user_details(request, userid):
   
 #not sure 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def is_user_admin(request, userid):
     try:
         # Fetch the user by ID
@@ -76,93 +78,37 @@ def is_user_admin(request, userid):
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
     
-#only accessed by admin    
-@api_view(['POST', 'PUT', 'PATCH', 'DELETE'])
-def manage_user(request, userid=None):
-    # Handle adding a new user (POST)
-    if request.method == 'POST':
-        serializer = UsersSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    # Handle updating an existing user (PUT or PATCH)
-    if request.method in ['PUT', 'PATCH']:
-        try:
-            user = Users.objects.get(userid=userid)
-        except Users.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        partial = request.method == 'PATCH'
-        serializer = UsersSerializer(user, data=request.data, partial=partial)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    # Handle deleting a user (DELETE)
-    if request.method == 'DELETE':
-        try:
-            user = Users.objects.get(userid=userid)
-        except Users.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-        user.delete()
-        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-    
-
-#only accessed by admin
-@api_view(['POST', 'PUT', 'PATCH', 'DELETE'])
-def manage_admin(request, adminid=None):
-    # Handle adding a new admin (POST)
-    if request.method == 'POST':
-        serializer = AdminSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Handle updating an existing admin (PUT or PATCH)
-    if request.method in ['PUT', 'PATCH']:
-        try:
-            admin = Admin.objects.get(adminid=adminid)
-        except Admin.DoesNotExist:
-            return Response({'error': 'Admin not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        partial = request.method == 'PATCH'  # Partial update for PATCH
-        serializer = AdminSerializer(admin, data=request.data, partial=partial)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Handle removing an admin (DELETE)
-    if request.method == 'DELETE':
-        try:
-            admin = Admin.objects.get(adminid=adminid)
-        except Admin.DoesNotExist:
-            return Response({'error': 'Admin not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        admin.delete()
-        return Response({'message': 'Admin removed successfully'}, status=status.HTTP_204_NO_CONTENT)
-    
-
-#only accessed by the users session
-@api_view(['PUT', 'PATCH'])
-@permission_classes([IsAuthenticated])
-def edit_user(request, userid):
+@api_view(['PATCH'])
+@permission_classes([IsAdminOrOwner]) 
+def edit_user_info(request, userid):
+    """
+    Edit user information, including inherited fields from AbstractUser and custom fields.
+    Only admins can update the is_staff field.
+    """
     try:
-        # Get the user by ID
+        # Fetch the user by ID
         user = Users.objects.get(userid=userid)
     except Users.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Handle partial or full update
-    partial = request.method == 'PATCH'
-    serializer = UsersSerializer(user, data=request.data, partial=partial)
+    # Only allow admins to update the is_staff field
+    if 'is_staff' in request.data and not request.user.is_staff:
+        return Response({'error': 'You do not have permission to edit staff status.'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Allow partial updates of user information
+    serializer = UsersSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    #test
+    #{
+    #"phonenumber": "+123456789",
+    #"address": "1234 Main St, Springfield, IL",
+    #"first_name": "John",
+    #"last_name": "Doe"
+    #}

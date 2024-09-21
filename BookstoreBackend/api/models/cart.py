@@ -9,7 +9,7 @@ class Carts(models.Model):
         managed = False
         db_table = 'carts'
 
-class Cartproducts(models.Model):
+class CartProducts(models.Model):
     cartproductid = models.AutoField(db_column='CartProductID', primary_key=True)  # Field name made lowercase.
     cartid = models.ForeignKey('Carts', models.DO_NOTHING, db_column='CartID')  # Field name made lowercase.
     productid = models.ForeignKey('Products', models.DO_NOTHING, db_column='ProductID')  # Field name made lowercase.
