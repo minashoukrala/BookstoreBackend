@@ -5,7 +5,7 @@ from .models import Users, Products, ProductImages, ProductCategory, Orders, Ord
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['userid', 'username', 'email', 'first_name', 'last_name', 'phonenumber', 'address', 'is_staff']  # Include custom fields
+        fields = ['userid', 'username', 'email', 'first_name', 'last_name', 'phonenumber', 'address', 'is_staff', 'date_joined']  # Include custom fields
 
 # Serializer for the Products model
 class ProductsSerializer(serializers.ModelSerializer):

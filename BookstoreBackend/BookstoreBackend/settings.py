@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',  # You may skip this if you don't need social authentication
     'rest_framework.authtoken',
+    
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -103,15 +105,16 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     
      # Allauth middleware
     'allauth.account.middleware.AccountMiddleware',  # Add this line
     
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000'] 
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000'] 
 
 
 
@@ -134,6 +137,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'BookstoreBackend.wsgi.application'
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Database
@@ -221,7 +225,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://your-supabase-url.supabase.co",
+    'http://localhost:3000',
 ]
 
 # reset password email in production

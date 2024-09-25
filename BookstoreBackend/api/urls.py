@@ -1,22 +1,24 @@
 from django.urls import path, include
-from .views.user_views import users_list,user_details,is_user_admin, edit_user_info
+from .views.user_views import users_list,user_details,is_user_admin, edit_user_info, user_status
 from .views.product_views import all_products_details, product_details, products_by_category, products_by_category, search_products_by_user_input, add_product, update_product, delete_product, available_or_requestable_products, products_by_category_with_quantity_or_requestable
 from .views.cart_views import user_cart_items, modify_cart_item_quantity, add_item_to_cart, delete_cart_item
 from .views.order_views import products_in_order, delivered_orders, orders_not_delivered, add_order, update_order, user_orders_with_products
 from .views.auth import RegisterView, LoginView, LogoutView, CustomPasswordResetView, CustomPasswordResetConfirmView
 from rest_framework.authtoken.views import obtain_auth_token
+from .views.catergories import add_category, all_categories, update_category
 
 
 urlpatterns = [
     
     path('users/', users_list, name='users_list'),  # List all users
-    path('users/<int:userid>/', user_details, name='user_details_api'),
+    path('user_details/', user_details, name='user_details_api'),
     path('users/<int:userid>/is_admin/', is_user_admin, name='is_user_admin'),
-    path('users/edit/<int:userid>/', edit_user_info, name='edit_user_info'),
+    path('users/edit/', edit_user_info, name='edit_user_info'),
+    path('users/status/', user_status, name='status'),
 
     path('products/', all_products_details, name='all_products_details'),  # List all products
     path('products/available-or-requestable/', available_or_requestable_products, name='available_or_requestable_products'),
-    path('api/products/category/<int:categoryid>/available-or-requestable/', products_by_category_with_quantity_or_requestable, name='products_by_category_with_quantity_or_requestable'),
+    path('products/category/<int:categoryid>/available-or-requestable/', products_by_category_with_quantity_or_requestable, name='products_by_category_with_quantity_or_requestable'),
     path('products/<int:productid>/', product_details, name='product_details'),
     path('products/category/<str:category>/', products_by_category, name='products_by_category'),
     path('products/categories/', products_by_category , name='product_categories'),
@@ -37,6 +39,10 @@ urlpatterns = [
     path('orders/not_delivered/', orders_not_delivered, name='orders_not_delivered'),
     path('orders/add/', add_order, name='add_order'), #add order details and orderproduct details
     path('orders/<int:orderid>/', update_order, name='update_order'),
+    
+    path('categories/', all_categories, name='categories'),
+    path('add-categories/', add_category, name='add categories'),
+    path('update-categories/', update_category, name='update categories'),
     
     path('accounts/', include('allauth.urls')),
     path('register/', RegisterView.as_view(), name='register'),
