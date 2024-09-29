@@ -88,6 +88,17 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Set session expiration to 1 day (86400 seconds)
 SESSION_COOKIE_AGE = 86400  # 1 day in seconds
 
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',  # Adjust to match your front-end URL
+]
+
+
+# settings.py
+
+STRIPE_SECRET_KEY = 'sk_test_51Q3OqUP5XSy2nJwrwc92naxBAqHYKy7VAhn5w0vog7MzGCGysQtOSkOSY4kOfPOVLltFM9sfP2lKJZzcTrA3hRIF00qB3s2Jk8'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51Q3OqUP5XSy2nJwrIxaNaYnf5sgBuETOg9uT7sNW59UOkfbiNNxMLfypTyI33DAeEZ98qg3GNvIQPU9lheOcxvL200FFdMWx8c'
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # Default Django authentication
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -106,6 +117,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
      # Allauth middleware
     'allauth.account.middleware.AccountMiddleware',  # Add this line

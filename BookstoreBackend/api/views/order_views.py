@@ -5,13 +5,13 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from ..models import Orders, OrderProduct
-from ..serializers import OrdersSerializer, OrderProductSerializer  # Assuming this serializer is implemented for Orders
+from ..serializers import OrdersSerializer, OrderProductSerializer, OrderSerializer  # Assuming this serializer is implemented for Orders
 from ..persmissions import IsAdminUser, IsOwner, IsAdminOrOwner
 from django.utils import timezone
 from datetime import timedelta
 
 @api_view(['GET'])
-@permission_classes([IsAdminOrOwner])
+@permission_classes([IsAuthenticated])
 def user_orders_with_products(request, userid):
     """
     Return all orders for a specific user, along with the products in each order, sorted by newest to oldest.
@@ -51,40 +51,6 @@ def products_in_order(request, orderid):
     except Orders.DoesNotExist:
         # Return a 404 response if the order does not exist
         return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def orders_not_delivered(request):
-    # Filter all orders where orderstatus is not 'delivered', and sort by newest to oldest
-    orders = Orders.objects.exclude(orderstatus='delivered').order_by('-orderdate')
-
-    # Check if there are any orders that match the criteria
-    if not orders.exists():
-        return Response({'message': 'No orders with status other than delivered'}, status=status.HTTP_404_NOT_FOUND)
-
-    # Serialize the orders
-    serializer = OrdersSerializer(orders, many=True)
-
-    # Return the serialized data
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def delivered_orders(request):
-    # Filter all orders where orderstatus is 'delivered', and sort by newest to oldest
-    orders = Orders.objects.filter(orderstatus='delivered').order_by('-orderdate')
-
-    # Check if there are any delivered orders
-    if not orders.exists():
-        return Response({'message': 'No delivered orders found'}, status=status.HTTP_404_NOT_FOUND)
-
-    # Serialize the orders
-    serializer = OrdersSerializer(orders, many=True)
-
-    # Return the serialized data
-    return Response(serializer.data)
 
 
 
@@ -111,7 +77,7 @@ def update_order(request, orderid):
 
     # Use PATCH for partial updates or PUT for full updates
     partial = request.method == 'PATCH'
-    serializer = OrdersSerializer(order, data=request.data, partial=partial)
+    serializer = OrderSerializer(order, data=request.data, partial=partial)
 
     if serializer.is_valid():
         serializer.save()
@@ -146,3 +112,44 @@ def delete_order(request, orderid):
 
     except Orders.DoesNotExist:
         return Response({'error': 'Order not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+    # View to get orders for a specific user
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def get_user_orders(request):
+    user = request.user  # Get the authenticated user
+    orders = Orders.objects.filter(userid=user.userid)  # Filter orders by the user's ID
+    serializer = OrderSerializer(orders, many=True)  # Serialize the orders
+    return Response(serializer.data)
+
+
+# View to get all orders (admin only)
+@api_view(['GET'])
+@permission_classes([IsAdminUser])  # Ensure only authenticated users can access this
+def get_all_orders(request):
+    if not request.user.is_staff:  # Ensure only admins can access all orders
+        return Response({'error': 'Unauthorized access'}, status=403)
+
+    orders = Orders.objects.all()  # Get all orders
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+# View to get all orders by status (authenticated users only)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def get_orders_by_status(request):
+    status = request.query_params.get('status')  # Get the status from query params
+    if not status:
+        return Response({'error': 'Status parameter is required'}, status=400)
+
+    # Filter orders based on the status
+    if request.user.is_staff:
+        # Admins can see all orders
+        orders = Orders.objects.filter(status=status)
+    else:
+        # Regular users can only see their own orders
+        orders = Orders.objects.filter(userid=request.user.userid, status=status)
+
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
